@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity2">
+
+
+    <EditText
+        android:id="@+id/phno"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="406dp"
+        android:ems="10"
+        android:hint="Enter your PhoneNo."
+        android:textColorHint="#222020"
+
+        android:inputType="phone" />
+
+    <Button
+        android:id="@+id/otp"
+        android:layout_width="398dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="329dp"
+        android:text="Request OTP" />
+
+    <EditText
+        android:id="@+id/enterotp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="230dp"
+        android:ems="10"
+        android:hint="Enter OTP"
+        android:textColorHint="#0E0C0C"
+        android:inputType="number" />
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="138dp"
+        android:text="sign in" />
+
+</RelativeLayout>

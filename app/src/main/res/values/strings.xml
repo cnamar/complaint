@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">Complaint</string>
+    <string-array name="language">
+        <item>ENGLISH</item>
+        <item>മലയാളം</item>
+
+
+    </string-array>
+    <string-array name="problems">
+        <item>Forest Encroachment</item>
+        <item>Sand Mining</item>
+        <item> Mountain</item>
+        <item>Others</item>
+    </string-array>
+    <string-array name="problemsmlm">
+        <item>വനകയ്യേറ്റം</item>
+        <item>മണൽവാരൽ</item>
+        <item>കുന്നിടിക്കൽ</item>
+        <item>മറ്റുള്ളവ</item>
+    </string-array>
+    <string-array name="district">
+        <item>Thrissur</item>
+        <item>ernakulam</item>
+    </string-array>
+    <string-array name="districtmlm">
+        <item>തൃശൂർ</item>
+        <item>എറണാകുളം</item>
+    </string-array>
+    <string-array name="panchayat1">
+        <item>avinissery</item>
+        <item>viyyur</item>
+    </string-array>
+    <string-array name="panchayat1mlm">
+        <item>അവിണിശ്ശേരി</item>
+        <item>വിയ്യൂർ</item>
+    </string-array>
+    <string-array name="panchayat2">
+        <item>kochi</item>
+        <item>vaikkom</item>
+    </string-array>
+    <string-array name="panchayat2mlm">
+
+        <item>കൊച്ചി</item>
+        <item>വൈക്കം</item>
+    </string-array>
+    <string-array name="ward1">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="ward2">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="ward3">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="ward4">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>
+
