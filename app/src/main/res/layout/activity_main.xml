@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="331dp"
-        android:text="Request OTP" />
+        android:text="complaint" />
 
     <Button
         android:id="@+id/blog"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="239dp"
-        android:text="sign in" />
+        android:text="home" />
 
     <TextView
         android:id="@+id/textView"

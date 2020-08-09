@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Complaint</string>
+    <string name="action_settings">Settings</string>
     <string-array name="language">
         <item>ENGLISH</item>
         <item>മലയാളം</item>

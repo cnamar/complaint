@@ -49,6 +49,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(main);
             }
         });
+        blog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent main=new Intent(MainActivity.this,blog.class);
+                main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(main);
+            }
+        });
 
 
     }
