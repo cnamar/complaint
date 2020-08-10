@@ -1,5 +1,6 @@
 package com.example.complaint;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -10,10 +11,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class complaint extends AppCompatActivity {
     EditText name,problem,landmark;
@@ -42,13 +50,14 @@ public class complaint extends AppCompatActivity {
                 {
                     name.setHint("Name of the complainant");
                     problem.setHint("Problem Description(if others)");
-                    //landmark.setHint("Landmark");
+                    landmark.setHint("Landmark");
 
                     problemtype.setText("Problem Type :");
                     location.setText("Location Details");
                     district.setText(" District            :");
                     panchayat.setText("Panchayat             :");
                     ward.setText("Ward no             :");
+
                     ArrayAdapter<CharSequence> adapter2=ArrayAdapter.createFromResource(complaint.this,R.array.problems,android.R.layout.simple_spinner_item);
                     adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner2.setAdapter(adapter2);
@@ -266,8 +275,52 @@ public class complaint extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-  
+                Map<String,Object> data=new HashMap<>();
+                String name1=name.getText().toString();
+                String problem1=problem.getText().toString();
+                String landmark1=landmark.getText().toString();
+                String spinner22=spinner2.getSelectedItem().toString();
+                String spinner33=spinner3.getSelectedItem().toString();
+                String spinner44=spinner4.getSelectedItem().toString();
+                String spinner55=spinner5.getSelectedItem().toString();
+                if(problem1.isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(),"Enter problem description",Toast.LENGTH_LONG).show();
+                }
+                else if(name1.isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(),"Enter name",Toast.LENGTH_LONG).show();
+                }
+                else if (landmark1.isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(),"Enter landmark",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    data.put("name", name1);
+                    data.put("problem_type", spinner22);
+                    data.put("problem_description", problem1);
+                    data.put("District", spinner33);
+                    data.put("Panchayat", spinner44);
+                    data.put("Ward no", spinner55);
+                    data.put("Landmark", landmark1);
+                    db.collection("Complaints")
+                            .add(data)
+                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
+                                        name.setText("");
+                                        landmark.setText("");
+                                        problem.setText("");
 
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+
+                }
 
             }
         });
