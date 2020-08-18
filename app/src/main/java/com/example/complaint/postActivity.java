@@ -92,7 +92,7 @@ public class postActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
-                                                        Intent intent = new Intent(postActivity.this, MainActivity.class);
+                                                        Intent intent = new Intent(postActivity.this, blog.class);
                                                         startActivity(intent);
                                                     }
                                                 }

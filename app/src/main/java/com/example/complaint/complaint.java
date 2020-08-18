@@ -3,7 +3,9 @@ package com.example.complaint;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -31,6 +34,7 @@ public class complaint extends AppCompatActivity {
     FirebaseAuth mauth;
     FirebaseUser muser;
     FirebaseFirestore db= FirebaseFirestore.getInstance();
+   private String uname,mail,ph;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +45,6 @@ public class complaint extends AppCompatActivity {
         spinner1.setAdapter(adapter1);
         mauth=FirebaseAuth.getInstance();
         muser=mauth.getCurrentUser();
-        final String ph=muser.getPhoneNumber();
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -287,16 +290,34 @@ public class complaint extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(),"Enter problem description",Toast.LENGTH_LONG).show();
                 }
-                else if(name1.isEmpty())
-                {
-                    Toast.makeText(getApplicationContext(),"Enter name",Toast.LENGTH_LONG).show();
-                }
                 else if (landmark1.isEmpty())
                 {
                     Toast.makeText(getApplicationContext(),"Enter landmark",Toast.LENGTH_LONG).show();
                 }
                 else {
-                    data.put("name", name1);
+                    final String uid=muser.getUid();
+                    db.collection("users").document(uid).get()
+                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                        DocumentSnapshot doc=task.getResult();
+                                         uname=doc.getString("Name");
+                                         mail=doc.getString("email");
+                                         ph=doc.getString("phone_no");
+                                         Log.d("TAG",uname+" "+mail+" "+ph);
+
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(getApplicationContext(),"error occured",Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                    data.put("name",uname);
+                    data.put("mail_id",mail);
+                    data.put("ph_no",ph);
                     data.put("problem_type", spinner22);
                     data.put("problem_description", problem1);
                     data.put("District", spinner33);
@@ -310,9 +331,10 @@ public class complaint extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<DocumentReference> task) {
                                     if (task.isSuccessful()) {
                                         Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
-                                        name.setText("");
-                                        landmark.setText("");
-                                        problem.setText("");
+                                        Intent page=new Intent(complaint.this,HomeActivity.class);
+                                        page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(page);
 
                                     } else {
                                         Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();

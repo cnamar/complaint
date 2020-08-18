@@ -42,7 +42,7 @@ public class blog extends AppCompatActivity {
         recyclerView = (RecyclerView)findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Blogzone");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("complaint");
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override

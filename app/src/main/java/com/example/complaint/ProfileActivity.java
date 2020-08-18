@@ -75,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
                                 mDatabaseUsers.child(userID).child("image").setValue(downloadUrl);
 
                                 Toast.makeText(ProfileActivity.this, "Successful", Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(ProfileActivity.this, LoginActivity.class);
+                                Intent i = new Intent(ProfileActivity.this, MainActivity.class);
                                 startActivity(i);
                             }
                         });
