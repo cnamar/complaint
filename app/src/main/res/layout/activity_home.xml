@@ -44,4 +44,12 @@
         android:layout_marginRight="9dp"
         android:text="logout" />
 
+    <Button
+        android:id="@+id/reset"
+        android:layout_width="394dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="164dp"
+        android:text="Password Reset" />
+
 </RelativeLayout>

@@ -26,7 +26,7 @@ package com.example.complaint;
 
 public class MainActivity extends AppCompatActivity {
     private EditText loginEmail, loginPass;
-    private TextView signup;
+    private TextView signup,forgot;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private DatabaseReference mDatabase;
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         loginBtn = (Button)findViewById(R.id.loginBtn);
         loginEmail = (EditText)findViewById(R.id.login_email);
         loginPass = (EditText)findViewById(R.id.login_password);
+        forgot=(TextView) findViewById(R.id.forgot);
         signup=(TextView) findViewById(R.id.signUpTxtView);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -92,6 +93,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email=loginEmail.getText().toString();
+                if(email.equals(null))
+                {
+                    Toast.makeText(getApplicationContext(),"email field is empty",Toast.LENGTH_LONG).show();
+                }
+                {
+                    mAuth.sendPasswordResetEmail(email)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getApplicationContext(), "A password reset link has been sent to your email id", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "not a valid mail id", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                }
+            }
+        });
+
     }
     public void checkUserExistence(){
 

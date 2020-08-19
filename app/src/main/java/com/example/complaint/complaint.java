@@ -278,23 +278,8 @@ public class complaint extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map<String,Object> data=new HashMap<>();
-                String name1=name.getText().toString();
-                String problem1=problem.getText().toString();
-                String landmark1=landmark.getText().toString();
-                String spinner22=spinner2.getSelectedItem().toString();
-                String spinner33=spinner3.getSelectedItem().toString();
-                String spinner44=spinner4.getSelectedItem().toString();
-                String spinner55=spinner5.getSelectedItem().toString();
-                if(problem1.isEmpty())
-                {
-                    Toast.makeText(getApplicationContext(),"Enter problem description",Toast.LENGTH_LONG).show();
-                }
-                else if (landmark1.isEmpty())
-                {
-                    Toast.makeText(getApplicationContext(),"Enter landmark",Toast.LENGTH_LONG).show();
-                }
-                else {
+
+
                     final String uid=muser.getUid();
                     db.collection("users").document(uid).get()
                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -306,7 +291,51 @@ public class complaint extends AppCompatActivity {
                                          uname=doc.getString("Name");
                                          mail=doc.getString("email");
                                          ph=doc.getString("phone_no");
-                                         Log.d("TAG",uname+" "+mail+" "+ph);
+
+                                        Map<String,Object> data=new HashMap<>();
+                                        String name1=name.getText().toString();
+                                        String problem1=problem.getText().toString();
+                                        String landmark1=landmark.getText().toString();
+                                        String spinner22=spinner2.getSelectedItem().toString();
+                                        String spinner33=spinner3.getSelectedItem().toString();
+                                        String spinner44=spinner4.getSelectedItem().toString();
+                                        String spinner55=spinner5.getSelectedItem().toString();
+                                        if(problem1.isEmpty())
+                                        {
+                                            Toast.makeText(getApplicationContext(),"Enter problem description",Toast.LENGTH_LONG).show();
+                                        }
+                                        else if (landmark1.isEmpty())
+                                        {
+                                            Toast.makeText(getApplicationContext(),"Enter landmark",Toast.LENGTH_LONG).show();
+                                        }
+                                        else {
+                                            data.put("name", uname);
+                                            data.put("mail_id", mail);
+                                            data.put("ph_no", ph);
+                                            data.put("problem_type", spinner22);
+                                            data.put("problem_description", problem1);
+                                            data.put("District", spinner33);
+                                            data.put("Panchayat", spinner44);
+                                            data.put("Ward no", spinner55);
+                                            data.put("Landmark", landmark1);
+                                            db.collection("Complaints")
+                                                    .add(data)
+                                                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
+                                                                Intent page = new Intent(complaint.this, HomeActivity.class);
+                                                                page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                startActivity(page);
+
+                                                            } else {
+                                                                Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                                            }
+                                                        }
+                                                    });
+                                        }
 
                                     }
                                     else
@@ -315,34 +344,9 @@ public class complaint extends AppCompatActivity {
                                     }
                                 }
                             });
-                    data.put("name",uname);
-                    data.put("mail_id",mail);
-                    data.put("ph_no",ph);
-                    data.put("problem_type", spinner22);
-                    data.put("problem_description", problem1);
-                    data.put("District", spinner33);
-                    data.put("Panchayat", spinner44);
-                    data.put("Ward no", spinner55);
-                    data.put("Landmark", landmark1);
-                    db.collection("Complaints")
-                            .add(data)
-                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
-                                        Intent page=new Intent(complaint.this,HomeActivity.class);
-                                        page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        startActivity(page);
 
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
 
-                }
+
 
             }
         });
@@ -361,6 +365,7 @@ public class complaint extends AppCompatActivity {
 
 
     }
+
 }
 
 
