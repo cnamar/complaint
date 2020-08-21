@@ -23,6 +23,11 @@ package com.example.complaint;
         import com.google.firebase.database.DatabaseReference;
         import com.google.firebase.database.FirebaseDatabase;
         import com.google.firebase.database.ValueEventListener;
+        import com.google.firebase.firestore.CollectionReference;
+        import com.google.firebase.firestore.FirebaseFirestore;
+        import com.google.firebase.firestore.Query;
+        import com.google.firebase.firestore.QueryDocumentSnapshot;
+        import com.google.firebase.firestore.QuerySnapshot;
 
 public class MainActivity extends AppCompatActivity {
     private EditText loginEmail, loginPass;
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser mUser;
     private DatabaseReference mDatabase;
     private Button loginBtn;
+    private FirebaseFirestore db;
+    int f=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mUser=(FirebaseUser)mAuth.getCurrentUser();
+        db=FirebaseFirestore.getInstance();
         if(mUser!=null)
         {
             Intent home=new Intent(MainActivity.this,HomeActivity.class);
@@ -73,23 +81,49 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
 
                             if (task.isSuccessful()){
-                                if(mAuth.getCurrentUser().isEmailVerified())
-                                {
-                                   checkUserExistence();
-                                }
-                                else
-                                {
-                                    Toast.makeText(getApplicationContext(),"Verify email",Toast.LENGTH_LONG).show();
-                                }
+                                final String id=mAuth.getCurrentUser().getUid();
+                                CollectionReference doc=db.collection("users");
+                                doc.get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if(task.isSuccessful())
+                                                {
+                                                    f=0;
+                                                    for(QueryDocumentSnapshot document: task.getResult())
+                                                    {
+                                                        String docid=document.getId();
+                                                        if(id.equals(docid))
+                                                        {
+                                                            if(mAuth.getCurrentUser().isEmailVerified())
+                                                            {
+                                                                checkUserExistence();
+                                                            }
+                                                            else
+                                                            {
+                                                                Toast.makeText(getApplicationContext(),"Verify email",Toast.LENGTH_LONG).show();
+                                                            }
+                                                            f=1;
+                                                        }
+                                                    }
+                                                    if(f==0)
+                                                    {
+                                                        Toast.makeText(getApplicationContext(),"Couldn't login,user not found",Toast.LENGTH_LONG).show();
+                                                    }
+
+                                                }
+                                            }
+                                        });
+
 
                             }else {
-                                Toast.makeText(MainActivity.this, "Couldn't login, User not found", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Couldn't login, User not found", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
                 }else {
 
-                    Toast.makeText(MainActivity.this, "Complete all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Complete all fields", Toast.LENGTH_LONG).show();
                 }
             }
         });

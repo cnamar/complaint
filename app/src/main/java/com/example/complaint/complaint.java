@@ -17,17 +17,22 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class complaint extends AppCompatActivity {
-    EditText name,problem,landmark;
+    EditText problem,landmark;
     TextView problemtype,location,district,panchayat,ward;
     Spinner spinner1,spinner2,spinner3,spinner4,spinner5;
     Button submit;
@@ -51,7 +56,7 @@ public class complaint extends AppCompatActivity {
                 String text=parent.getItemAtPosition(position).toString();
                 if(text.equals("ENGLISH"))
                 {
-                    name.setHint("Name of the complainant");
+
                     problem.setHint("Problem Description(if others)");
                     landmark.setHint("Landmark");
 
@@ -149,7 +154,7 @@ public class complaint extends AppCompatActivity {
                 }
                 else
                 {
-                    name.setHint("പരാതിക്കാരന്റെ പേര്");
+                  
                     problem.setHint("പ്രശ്നവിശദീകരണം(മറ്റുള്ളവ ആണെങ്കിൽ ) ");
                     landmark.setHint("അടയാളം");
                     problemtype.setText("പ്രശ്നത്തിന്റെ ഇനം :");
@@ -261,7 +266,6 @@ public class complaint extends AppCompatActivity {
 
             }
         });
-        name=findViewById(R.id.name);
         problem=findViewById(R.id.problem);
         landmark=findViewById(R.id.landmark);
         problemtype=findViewById(R.id.problem_type);
@@ -279,7 +283,12 @@ public class complaint extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
+                Calendar c;
+                int hour,minute;
+                c=Calendar.getInstance();
+                hour=c.get(Calendar.HOUR);
+                minute=c.get(Calendar.MINUTE);
+                final String time=String.valueOf(hour)+":"+String.valueOf(minute);
                     final String uid=muser.getUid();
                     db.collection("users").document(uid).get()
                             .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -292,14 +301,15 @@ public class complaint extends AppCompatActivity {
                                          mail=doc.getString("email");
                                          ph=doc.getString("phone_no");
 
-                                        Map<String,Object> data=new HashMap<>();
-                                        String name1=name.getText().toString();
+                                       final Map<String,Object> data=new HashMap<>();
+
                                         String problem1=problem.getText().toString();
                                         String landmark1=landmark.getText().toString();
                                         String spinner22=spinner2.getSelectedItem().toString();
                                         String spinner33=spinner3.getSelectedItem().toString();
-                                        String spinner44=spinner4.getSelectedItem().toString();
+                                        final String spinner44=spinner4.getSelectedItem().toString();
                                         String spinner55=spinner5.getSelectedItem().toString();
+
                                         if(problem1.isEmpty())
                                         {
                                             Toast.makeText(getApplicationContext(),"Enter problem description",Toast.LENGTH_LONG).show();
@@ -318,23 +328,41 @@ public class complaint extends AppCompatActivity {
                                             data.put("Panchayat", spinner44);
                                             data.put("Ward no", spinner55);
                                             data.put("Landmark", landmark1);
-                                            db.collection("Complaints")
-                                                    .add(data)
-                                                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                            data.put("Time",time);
+                                            final  CollectionReference docum=db.collection("Authorities");
+                                            docum.get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                         @Override
-                                                        public void onComplete(@NonNull Task<DocumentReference> task) {
-                                                            if (task.isSuccessful()) {
-                                                                Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
-                                                                Intent page = new Intent(complaint.this, HomeActivity.class);
-                                                                page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                                page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                                startActivity(page);
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if(task.isSuccessful())
+                                                            {
+                                                                for(QueryDocumentSnapshot document: task.getResult())
+                                                                {
+                                                                    if(document.getString("Local_body_name").equals(spinner44) )
+                                                                    {
+                                                                        docum.document(document.getId()).collection("Complaints")
+                                                                                .add(data)
+                                                                                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                                                        if (task.isSuccessful()) {
+                                                                                            Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
+                                                                                            Intent page = new Intent(complaint.this, HomeActivity.class);
+                                                                                            page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                                            page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                                            startActivity(page);
 
-                                                            } else {
-                                                                Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                                                                        } else {
+                                                                                            Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                                                                        }
+                                                                                    }
+                                                                                });
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     });
+
                                         }
 
                                     }
