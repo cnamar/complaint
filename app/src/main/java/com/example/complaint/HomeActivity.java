@@ -37,6 +37,7 @@ public class HomeActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         mUser=mAuth.getCurrentUser();
         db=FirebaseFirestore.getInstance();
+        //
         complaint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -49,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
         blog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent main=new Intent(HomeActivity.this,blog.class);
+                Intent main=new Intent(HomeActivity.this,blogsession.class);
                 main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(main);
