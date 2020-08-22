@@ -56,7 +56,7 @@ public class complaint extends AppCompatActivity {
                 String text=parent.getItemAtPosition(position).toString();
                 if(text.equals("ENGLISH"))
                 {
-
+                    //for english values in fields
                     problem.setHint("Problem Description(if others)");
                     landmark.setHint("Landmark");
 
@@ -70,7 +70,7 @@ public class complaint extends AppCompatActivity {
                     adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner2.setAdapter(adapter2);
 
-
+                    //selecting values of spinner3 according to the selection in spinner2
                     ArrayAdapter<CharSequence> adapter3=ArrayAdapter.createFromResource(complaint.this,R.array.district,android.R.layout.simple_spinner_item);
                     adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner3.setAdapter(adapter3);
@@ -154,7 +154,7 @@ public class complaint extends AppCompatActivity {
                 }
                 else
                 {
-                  
+
                     problem.setHint("പ്രശ്നവിശദീകരണം(മറ്റുള്ളവ ആണെങ്കിൽ ) ");
                     landmark.setHint("അടയാളം");
                     problemtype.setText("പ്രശ്നത്തിന്റെ ഇനം :");
@@ -218,7 +218,7 @@ public class complaint extends AppCompatActivity {
                             }
                             else
                             {
-
+                               // for malayalam values in fields
                                 ArrayAdapter<CharSequence> adapter4 = ArrayAdapter.createFromResource(complaint.this, R.array.panchayat2mlm, android.R.layout.simple_spinner_item);
                                 adapter4.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinner4.setAdapter(adapter4);
@@ -282,7 +282,7 @@ public class complaint extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //for getting the time at which data is uploaded
                 Calendar c;
                 int hour,minute;
                 c=Calendar.getInstance();
@@ -290,88 +290,75 @@ public class complaint extends AppCompatActivity {
                 minute=c.get(Calendar.MINUTE);
                 final String time=String.valueOf(hour)+":"+String.valueOf(minute);
                     final String uid=muser.getUid();
-                    db.collection("users").document(uid).get()
-                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+
+
+                final Map<String,Object> data=new HashMap<>();
+                //for getting the string values in text fields and spinners
+                String problem1=problem.getText().toString();
+                String landmark1=landmark.getText().toString();
+                String spinner22=spinner2.getSelectedItem().toString();
+                String spinner33=spinner3.getSelectedItem().toString();
+                final String spinner44=spinner4.getSelectedItem().toString();
+                String spinner55=spinner5.getSelectedItem().toString();
+
+                if(problem1.isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(),"Enter problem description",Toast.LENGTH_LONG).show();
+                }
+                else if (landmark1.isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(),"Enter landmark",Toast.LENGTH_LONG).show();
+                }
+                else {
+                    //mapping the respective values to be added to the correspondinf field names
+                    data.put("problem_type", spinner22);
+                    data.put("problem_description", problem1);
+                    data.put("District", spinner33);
+                    data.put("Panchayat", spinner44);
+                    data.put("Ward_no", spinner55);
+                    data.put("Landmark", landmark1);
+                    data.put("Time",time);
+                    data.put("Status",0);
+                    //for deciding to which location's authority,the data should be added
+                    final  CollectionReference docum=db.collection("Authorities");
+                    docum.get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if(task.isSuccessful())
                                     {
-                                        DocumentSnapshot doc=task.getResult();
-                                         uname=doc.getString("Name");
-                                         mail=doc.getString("email");
-                                         ph=doc.getString("phone_no");
-
-                                       final Map<String,Object> data=new HashMap<>();
-
-                                        String problem1=problem.getText().toString();
-                                        String landmark1=landmark.getText().toString();
-                                        String spinner22=spinner2.getSelectedItem().toString();
-                                        String spinner33=spinner3.getSelectedItem().toString();
-                                        final String spinner44=spinner4.getSelectedItem().toString();
-                                        String spinner55=spinner5.getSelectedItem().toString();
-
-                                        if(problem1.isEmpty())
+                                        for(QueryDocumentSnapshot document: task.getResult())
                                         {
-                                            Toast.makeText(getApplicationContext(),"Enter problem description",Toast.LENGTH_LONG).show();
-                                        }
-                                        else if (landmark1.isEmpty())
-                                        {
-                                            Toast.makeText(getApplicationContext(),"Enter landmark",Toast.LENGTH_LONG).show();
-                                        }
-                                        else {
-                                            data.put("name", uname);
-                                            data.put("mail_id", mail);
-                                            data.put("ph_no", ph);
-                                            data.put("problem_type", spinner22);
-                                            data.put("problem_description", problem1);
-                                            data.put("District", spinner33);
-                                            data.put("Panchayat", spinner44);
-                                            data.put("Ward no", spinner55);
-                                            data.put("Landmark", landmark1);
-                                            data.put("Time",time);
-                                            final  CollectionReference docum=db.collection("Authorities");
-                                            docum.get()
-                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                            if(task.isSuccessful())
-                                                            {
-                                                                for(QueryDocumentSnapshot document: task.getResult())
-                                                                {
-                                                                    if(document.getString("Local_body_name").equals(spinner44) )
-                                                                    {
-                                                                        docum.document(document.getId()).collection("Complaints")
-                                                                                .add(data)
-                                                                                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                                                                    @Override
-                                                                                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                                                                                        if (task.isSuccessful()) {
-                                                                                            Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
-                                                                                            Intent page = new Intent(complaint.this, HomeActivity.class);
-                                                                                            page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                                                            page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                                                            startActivity(page);
+                                            if(document.getString("Local_body_name").equals(spinner44) )
+                                            {
+                                                //adding data to the respective firebase document
+                                                docum.document(document.getId()).collection("Complaints")
+                                                        .add(data)
+                                                        .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    Toast.makeText(getApplicationContext(), "complaint successfully added", Toast.LENGTH_LONG).show();
+                                                                    Intent page = new Intent(complaint.this, HomeActivity.class);
+                                                                    page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                    page.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                    startActivity(page);
 
-                                                                                        } else {
-                                                                                            Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                                                                        }
-                                                                                    }
-                                                                                });
-                                                                    }
+                                                                } else {
+                                                                    Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                                                 }
                                                             }
-                                                        }
-                                                    });
-
+                                                        });
+                                            }
                                         }
-
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(getApplicationContext(),"error occured",Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
+
+                                        }
+
+
 
 
 
